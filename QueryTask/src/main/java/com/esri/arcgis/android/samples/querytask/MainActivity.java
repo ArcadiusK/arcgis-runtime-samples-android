@@ -18,6 +18,7 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +28,8 @@ import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.core.geometry.Envelope;
+import com.esri.core.geometry.Geometry;
+import com.esri.core.geometry.MultiPath;
 import com.esri.core.geometry.SpatialReference;
 import com.esri.core.map.Feature;
 import com.esri.core.map.FeatureResult;
@@ -160,9 +163,42 @@ public class MainActivity extends Activity {
 					progress.incrementProgressBy(size / 100);
 					if (element instanceof Feature) {
 						Feature feature = (Feature) element;
-						// turn feature into graphic
+						// turn feature into graphic\
+
+                        Geometry arcGeometry = feature.getGeometry();
+                        Geometry.Type arcType = arcGeometry.getType();
+                        //int arcValue = arcType.value();
+
+
+
+                        MultiPath arcMultiPath = (MultiPath)arcGeometry;
+                        int arcPointCount = arcMultiPath.getPointCount();
+
+
 						Graphic graphic = new Graphic(feature.getGeometry(),
-								feature.getSymbol(), feature.getAttributes());
+								                      feature.getSymbol(),
+                                                      feature.getAttributes());
+
+                        Log.e("arcValue", "arcPointCount: "+arcPointCount);
+                        Log.e("arcValue", "arcType.name: "+arcType.name());
+                        Log.e("arcValue", "Point0: "+arcMultiPath.getPoint(0));
+
+                        //Projected Bounds: -20037508.3428, -19971868.8804, 20037508.3428, 19971868.8804
+
+                        // -20037508.3428, 19971868.8804              20037508.3428, 19971868.8804
+                        //
+                        //                               [-1.12028214123E7, 5806479.258599997]
+                        //
+                        // -20037508.3428, 0                0,0          20037508.3428, 0
+                        //
+                        //
+                        //
+                        // -20037508.3428, -19971868.8804             20037508.3428, -19971868.8804
+
+
+
+
+
 						// add graphic to layer
 						graphicsLayer.addGraphic(graphic);
 					}
